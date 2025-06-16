@@ -1,0 +1,28 @@
+:root {
+    --header-text-color: #000000;
+    --header-bg-color: #ffffff;
+    --header-box-shadow-color: #0000001a;
+    --header-active-link-color: #3167FF;
+    --price-highlight-color: #FF8A00;
+}
+.main-container {
+    font-family: 'Roboto', sans-serif;
+}
+.main-container .breadcrumb-nav {
+    background-color: var(--header-bg-color);
+    box-shadow: 0 1px 3px var(--header-box-shadow-color);
+}
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: var(--header-text-color);
+    margin: 0 12px;
+}
+.breadcrumb .breadcrumb-link-active {
+    color: var(--header-active-link-color);
+    font-weight: 400;
+}
+.breadcrumb .breadcrumb-link {
+    color: #000000;
+    font-weight: 400;
+    cursor: default;
+}
