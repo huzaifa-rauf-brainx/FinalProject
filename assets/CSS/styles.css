@@ -3,11 +3,18 @@
     --header-bg-color: #ffffff;
     --header-box-shadow-color: #0000001a;
     --header-active-link-color: #3167FF;
-    --price-highlight-color: #FF8A00;
+    --price-highlight-color: #D75D33;
+    --plans-page-bg-color: #FFFDF7;
+    --plans-page-text-color: #333333;
 }
+/* Body Styles */
 .main-container {
     font-family: 'Roboto', sans-serif;
 }
+.main-container .plans-page-body {
+    background-color: var(--plans-page-bg-color);
+}
+/*  */
 .main-container .breadcrumb-nav {
     background-color: var(--header-bg-color);
     box-shadow: 0 1px 3px var(--header-box-shadow-color);
@@ -19,10 +26,126 @@
 }
 .breadcrumb .breadcrumb-link-active {
     color: var(--header-active-link-color);
-    font-weight: 400;
+    font-weight: 700;
+    font-size: 14px;
 }
 .breadcrumb .breadcrumb-link {
     color: #000000;
     font-weight: 400;
+    font-size: 14px;
     cursor: default;
+}
+/* Main Content Styles */
+.plan-page-header .logo {
+    width: 100%;
+    max-width: 80px;
+    height: auto;
+}
+.plan-page-header .main-title {
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--plans-page-text-color);
+}
+.plan-page-header .main-description {
+    font-size: 16px;
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--plans-page-text-color);
+}
+.plan-page-header .price-highlight {
+    color: var(--price-highlight-color);
+    font-weight: 600;
+}
+/* Card Styles */
+.meal-card-wrapper {
+    cursor: pointer;
+}
+.meal-card-wrapper .meal-plan-card {
+    border-radius: 15px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+.meal-plan-card .image-container {
+    overflow: hidden;
+    line-height: 0;
+}
+.image-container .card-img-top {
+    border-radius: 0;
+    object-fit: cover;
+    height: 100%;
+    max-height: 200px;
+    width: 100%;
+    transition: transform 0.3s ease;
+    display: block;
+}
+.image-container:hover .card-img-top {
+    transform: scale(1.1);
+}
+.meal-plan-card .save-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background-color: var(--header-bg-color);
+    color: var(--plans-page-text-color);
+    padding: 1px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1;
+}
+.card-description {
+    padding-top: 8px;
+}
+.card-description .meal-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--header-text-color);
+}
+.card-description .per-week {
+    font-size: 14px;
+    color: var(--header-text-color);
+    font-weight: 400;
+}
+.price-info .price-highlight {
+    color: var(--price-highlight-color)
+}
+.card-description .plan-price {
+    font-size: 16px;
+    font-weight: 500;
+}
+.card-description .per-meal-price {
+    color: var(--header-text-color);
+    font-size: 16px;
+    margin: 0;
+}
+.plans-page-footer .shipping-text {
+    color: var(--header-text-color);
+    font-size: 14px;
+}
+.plans-page-footer .get-started-btn {
+    display: inline-block;
+    background: linear-gradient(to right, #AF2081, #533174);
+    color: var(--header-bg-color);
+    text-decoration: none;
+    padding: 12px 32px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    min-width: 160px;
+}
+.plans-page-footer .get-started-btn:hover {
+    min-width: 400px;
+}
+@media (max-width: 767px) {
+    .breadcrumb-item + .breadcrumb-item::before {
+        margin: 0 0;
+    }
+    .card-description .meal-count {
+        font-size: 18px;
+    }
+    .plans-page-footer .get-started-btn {
+        width: 100%;
+        padding: 12px 16px;
+        transition: none;
+    }
 }
