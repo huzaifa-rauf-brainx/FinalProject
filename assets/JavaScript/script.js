@@ -1,94 +1,117 @@
-$(document).ready(function () {
-    const steps = $(".breadcrumb-item");
-    let currentStep = 0;
-    $("#days-section").hide();
-    $(".plans-page-body").show();
-    steps.each(function (index) {
-        if (index > currentStep) {
-            $(this).addClass("disabled");
-        }
-    });
-    steps.on("click", function (e) {
-        const index = $(this).index();
-        if (index > currentStep) {
-            e.preventDefault();
-        } else {
-            currentStep = index;
-            updateBreadcrumbUI(currentStep);
-            if (currentStep === 0) {
-                $("#days-section").hide();
-                $(".plans-page-body").show();
-            } else if (currentStep === 1) {
-                $("#days-section").show();
-                $(".plans-page-body").hide();
-            }
-        }
-    });
-    $(".meal-card-wrapper").on("click", function () {
-        const mealCount = $(this).find(".meal-count").text().trim();
-        const planPrice = $(this).find(".plan-price .price-highlight").text().trim();
-        const perMealPrice = $(this).find(".per-meal-price").text().trim();
+document.addEventListener("DOMContentLoaded", function () {
+    const container = document.querySelector(".delivery-dates-container");
+    const selectedDateSpan = document.querySelector(".selected-date");
 
-        localStorage.setItem("mealCount", mealCount);
-        localStorage.setItem("planPrice", planPrice);
-        localStorage.setItem("perMealPrice", perMealPrice);
+    function getNextMonday() {
+        const today = new Date();
+        const day = today.getDay();
+        const diff = (8 - day) % 7 || 7;
+        today.setDate(today.getDate() + diff);
+        return today;
+    }
 
-        $("#days-mealCount").text(mealCount);
-        $("#days-planPrice").text(planPrice);
-        $("#days-perMealPrice").text(perMealPrice);
-
-        $(".plans-page-body").hide();
-        $("#days-section").show();
-        currentStep = 1;
-        updateBreadcrumbUI(currentStep);
-    });
-    $("#back-to-plans").on("click", function () {
-        currentStep = 0;
-        updateBreadcrumbUI(currentStep);
-
-        $("#days-section").hide();
-        $(".plans-page-body").show();
-    });
-
-    function updateBreadcrumbUI(currentStep) {
-        const steps = $(".breadcrumb-item");
-        steps.each(function (index) {
-            const link = $(this).find("a");
-
-            if (index < currentStep) {
-                $(this).removeClass("disabled").removeClass("breadcrumb-item-active");
-                link.removeClass("breadcrumb-link-active");
-            } else if (index === currentStep) {
-                $(this).removeClass("disabled").addClass("breadcrumb-item-active");
-                link.addClass("breadcrumb-link-active");
-            } else {
-                $(this).addClass("disabled").removeClass("breadcrumb-item-active");
-                link.removeClass("breadcrumb-link-active");
-            }
+    function formatDate(date) {
+        return date.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "short",
+            day: "numeric"
         });
     }
-});
 
-document.addEventListener('DOMContentLoaded', function () {
-    const dateOptions = document.querySelectorAll('.date-option');
-    const selectedDateSpan = document.querySelector('.selected-date');
-    const firstOption = dateOptions[0];
-    const mostPopularTag = firstOption.querySelector('.most-popular-tag');
+    function createDateElement(dateStr, isSelected = false, isMostPopular = false) {
+        const div = document.createElement("div");
+        div.className = "date-option" + (isSelected ? " selected" : "");
+        div.setAttribute("data-date", dateStr);
 
-    dateOptions.forEach(option => {
-        option.addEventListener('click', function () {
-            dateOptions.forEach(opt => {
-                opt.classList.remove('selected');
-            });
+        const dateSpan = document.createElement("span");
+        dateSpan.className = "date-text";
+        dateSpan.textContent = dateStr;
+        div.appendChild(dateSpan);
 
-            this.classList.add('selected');
+        if (isMostPopular) {
+            const tag = document.createElement("span");
+            tag.className = "most-popular-tag";
+            tag.textContent = "Most Popular";
+            div.appendChild(tag);
+        }
 
-            if (mostPopularTag) {
-                mostPopularTag.style.display = (this === firstOption) ? '' : 'none';
+        return div;
+    }
+
+    const weekdays = [];
+    let current = getNextMonday();
+
+    while (weekdays.length < 10) {
+        const day = current.getDay();
+        if (day >= 1 && day <= 4) {
+            weekdays.push(new Date(current));
+        }
+        current.setDate(current.getDate() + 1);
+    }
+
+    weekdays.forEach((date, index) => {
+        const formatted = formatDate(date);
+        const el = createDateElement(formatted, index === 0, index === 0);
+        container.appendChild(el);
+    });
+
+    container.addEventListener("click", function (e) {
+        const option = e.target.closest(".date-option");
+        if (!option) return;
+
+        container.querySelectorAll(".date-option").forEach(el => el.classList.remove("selected"));
+        option.classList.add("selected");
+
+        selectedDateSpan.textContent = option.dataset.date;
+
+        container.querySelectorAll(".most-popular-tag").forEach(tag => {
+            const parent = tag.closest(".date-option");
+            if (parent === container.firstElementChild) {
+                tag.style.display = option === parent ? "" : "none";
             }
-
-            const selectedDate = this.getAttribute('data-date');
-            selectedDateSpan.textContent = selectedDate;
         });
     });
+
+    loadMeals();
 });
+
+// Function to load and display meals
+async function loadMeals() {
+    try {
+        const response = await fetch('meals.json');
+        const meals = await response.json();
+        const template = document.getElementById('card-template');
+        const container = document.querySelector('.row.g-2');
+
+        meals.forEach(meal => {
+            const clone = template.content.cloneNode(true);
+            const mealCard = clone.querySelector('.meal-card');
+            
+            if (meal.isSpecial) {
+                mealCard.classList.add('special');
+            }
+            
+            clone.querySelector('.meal-img').src = meal.image;
+            clone.querySelector('.meal-img').alt = meal.name;
+            
+            const priceTag = clone.querySelector('.price-tag');
+            if (meal.isSpecial) {
+                priceTag.textContent = `+$${meal.price.toFixed(2)}`;
+            }
+            
+            clone.querySelector('.meal-name').textContent = meal.name;
+            clone.querySelector('.meal-ingredients').textContent = meal.ingredients;
+            clone.querySelector('.gluten-value').textContent = meal.gluten;
+            clone.querySelector('.calories-value').textContent = meal.calories;
+            clone.querySelector('.carbs-value').textContent = meal.carbs;
+            clone.querySelector('.proteins-value').textContent = meal.proteins;
+
+            const addButton = clone.querySelector('.add-meal-btn');
+            addButton.addEventListener('click', () => addToCart(meal));
+
+            container.appendChild(clone);
+        });
+    } catch (error) {
+        console.error('Error loading meals:', error);
+    }
+}
