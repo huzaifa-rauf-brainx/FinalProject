@@ -408,7 +408,7 @@
 
 .meal-card .meal-image-container {
     position: relative;
-    padding-top: 68%;
+    padding-top: 64%;
 }
 
 .meal-image-container .meal-img {
@@ -420,7 +420,7 @@
 
 .meal-image-container .price-tag {
     position: absolute;
-    bottom: 9px;
+    bottom: 0px;
     left: 0px;
     background-color: var(--price-highlight-color);
     color: var(--header-bg-color);
@@ -433,31 +433,28 @@
 .meal-card .meal-info {
     display: flex;
     flex-direction: column;
-    padding: 0 4px;
 }
 
 .meal-info .meal-name {
     font-family: 'Roboto-Bold', sans-serif;
     font-size: 14px;
     color: var(--plans-page-text-color);
+    padding: 10px 5px 0px 5px;
 }
 
 .meal-info .meal-ingredients {
     font-size: 12px;
     color: var(--meal-info-text-color);
+    padding: 0px 5px;
 }
 
 .meal-footer .meal-stats {
-    display: flex;
-    align-items: center;
     color: var(--meal-info-text-color);
-    gap: 6px;
 }
 
 .meal-stats .stat-item {
     display: flex;
     align-items: center;
-    gap: 4px;
 }
 
 .meal-stats .stat-value {
@@ -472,7 +469,7 @@
 
 .meal-stats .add-meal-btn {
     margin-left: auto;
-    padding: 8px 20px;
+    padding: 7px 14px;
     background: linear-gradient(to right, #AF2081, #533174);
     color: var(--header-bg-color);
     border: none;
@@ -486,6 +483,13 @@
 .meal-stats .calories-stats,
 .meal-stats .carbs-stats {
     border-right: 1px solid var(--meals-stats-border-color);
+}
+
+.meal-stats .gluten-stats,
+.meal-stats .calories-stats,
+.meal-stats .carbs-stats,
+.meal-stats .proteins-stats {
+    padding: 0px 5px;
 }
 
 .meal-card.special {
@@ -528,6 +532,10 @@
     .days-page-main .delivery-day-main,
     .days-page-main .common-question-header {
         font-size: 30px;
+    }
+
+    .days-page-main .common-question-header {
+        max-width: 100%;
     }
 
     .accordion-main-panel {
