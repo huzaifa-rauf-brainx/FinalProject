@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const formatted = formatDate(date);
         const el = createDateElement(formatted, index === 0, index === 0);
         container.appendChild(el);
+        if (index === 0) {
+            selectedDateSpan.textContent = formatted;
+        }
     });
 
     container.addEventListener("click", function (e) {
@@ -81,24 +84,26 @@ async function loadMeals() {
         const response = await fetch('meals.json');
         const meals = await response.json();
         const template = document.getElementById('card-template');
-        const container = document.querySelector('.row.g-2');
+        const container = document.getElementById('meals-grid');
 
         meals.forEach(meal => {
             const clone = template.content.cloneNode(true);
             const mealCard = clone.querySelector('.meal-card');
-            
+
             if (meal.isSpecial) {
                 mealCard.classList.add('special');
             }
-            
+
             clone.querySelector('.meal-img').src = meal.image;
             clone.querySelector('.meal-img').alt = meal.name;
-            
+
             const priceTag = clone.querySelector('.price-tag');
             if (meal.isSpecial) {
-                priceTag.textContent = `+$${meal.price.toFixed(2)}`;
+                priceTag.textContent = `+$${meal.additionalCharges.toFixed(2)}`;
+            } else {
+                priceTag.style.display = "none";
             }
-            
+
             clone.querySelector('.meal-name').textContent = meal.name;
             clone.querySelector('.meal-ingredients').textContent = meal.ingredients;
             clone.querySelector('.gluten-value').textContent = meal.gluten;
