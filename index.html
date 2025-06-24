@@ -597,6 +597,10 @@
                                 <span class="order-meals-header">Meals</span>
                                 <span class="order-meals-header order-meal-value" id="mealsTotal">$0.00</span>
                             </div>
+                            <div class="order-discount d-flex justify-content-between mb-0">
+                                <span class="order-discount-header">Discount</span>
+                                <span class="order-discount-header order-meal-value" id="discountTotal">$0.00</span>
+                            </div>
                             <div class="order-shipping d-flex justify-content-between mb-0">
                                 <span class="order-shipping-header">Shipping</span>
                                 <span class="order-shipping-header order-meal-value">$8.99</span>
@@ -922,7 +926,7 @@
                     <h3 class="meal-name meal-name-main"></h3>
                     <p class="meal-ingredients"></p>
                     <div class="meal-footer">
-                        <div class="meal-stats mb-2 d-flex justify-content-between">
+                        <div class="meal-stats mb-2 ">
                             <div class="d-flex justify-content-between">
                                 <div class="gluten-stats">
                                     <div class="stat-item">
@@ -950,9 +954,9 @@
                                     </div>
                                     <div class="stat-label">Proteins</div>
                                 </div>
-                            </div>
-                            <div class="ms-auto add-btn-wrapper">
-                                <button class="add-meal-btn">+ Add</button>
+                                <div class="add-btn-wrapper">
+                                    <button class="add-meal-btn">+ Add</button>
+                                </div>
                             </div>
                         </div>
                     </div>

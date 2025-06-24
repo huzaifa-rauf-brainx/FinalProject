@@ -26,8 +26,6 @@ function addToCart(meal) {
         cart.push(mealWithId);
         updateCartUI();
         saveCartToLocalStorage();
-    } else {
-        alert(`You can only select ${mealCount} meals.`);
     }
 }
 
@@ -656,6 +654,23 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Order placed successfully!");
         }
     });
+
+    const zipChangeLink = document.querySelector('.zip-change-opt');
+    const zipInput = document.getElementById('zip');
+    
+    if (zipChangeLink && zipInput) {
+        zipChangeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            zipInput.value = '';
+            zipInput.classList.remove('is-valid', 'is-invalid');
+            const errorDiv = document.getElementById('zipError');
+            if (errorDiv) {
+                errorDiv.remove();
+            }
+            zipInput.focus();
+            updateSubmitButtonState();
+        });
+    }
 });
 
 const mobileCartTrigger = document.getElementById('mobile-cart-trigger');
@@ -695,7 +710,8 @@ function applyDiscount(discountPercent) {
     const discountAmount = (originalMealsTotal * discountPercent) / 100;
     const discountedMealsTotal = originalMealsTotal - discountAmount;
     
-    document.getElementById('mealsTotal').textContent = `$${discountedMealsTotal.toFixed(2)}`;
+    document.getElementById('mealsTotal').textContent = `$${originalMealsTotal.toFixed(2)}`;
+    document.getElementById('discountTotal').textContent = `-$${discountAmount.toFixed(2)}`;
     
     const total = discountedMealsTotal + shipping + tax;
     document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
@@ -720,6 +736,7 @@ function removeDiscount() {
     const tax = 10.99;
     
     document.getElementById('mealsTotal').textContent = `$${originalMealsTotal.toFixed(2)}`;
+    document.getElementById('discountTotal').textContent = '$0.00';
     
     const total = originalMealsTotal + shipping + tax;
     document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
@@ -729,32 +746,35 @@ function removeDiscount() {
     
     document.getElementById('addPromoLink').addEventListener('click', function (e) {
         e.preventDefault();
-
-        const promoContainer = document.querySelector('.order-summary-promo');
-        if (promoContainer) {
-            promoContainer.innerHTML = `
-                <div class="promo-input-container">
-                    <div class="d-flex w-100">
-                        <input type="number" class="form-control flex-grow-1 me-2" id="promoInput" min="1" max="50" placeholder="Enter discount (1-50)">
-                        <button class="btn btn-primary" id="applyPromo">Apply</button>
-                    </div>
-                    <small class="text-danger d-none mt-1" id="promoError">Please enter a value between 1 and 50</small>
-                </div>
-            `;
-
-            const promoInput = document.getElementById('promoInput');
-            const applyButton = document.getElementById('applyPromo');
-            const errorText = document.getElementById('promoError');
-
-            applyButton.addEventListener('click', function() {
-                const discountValue = parseInt(promoInput.value);
-                if (discountValue >= 1 && discountValue <= 50) {
-                    errorText.classList.add('d-none');
-                    applyDiscount(discountValue);
-                } else {
-                    errorText.classList.remove('d-none');
-                }
-            });
-        }
+        showPromoInput();
     });
+}
+
+function showPromoInput() {
+    const promoContainer = document.querySelector('.order-summary-promo');
+    if (promoContainer) {
+        promoContainer.innerHTML = `
+            <div class="promo-input-container">
+                <div class="d-flex w-100">
+                    <input type="number" class="form-control flex-grow-1 me-2" id="promoInput" min="1" max="50" placeholder="Enter discount (1-50)">
+                    <button class="btn btn-primary" id="applyPromo">Apply</button>
+                </div>
+                <small class="text-danger d-none mt-1" id="promoError">Please enter a value between 1 and 50</small>
+            </div>
+        `;
+
+        const promoInput = document.getElementById('promoInput');
+        const applyButton = document.getElementById('applyPromo');
+        const errorText = document.getElementById('promoError');
+
+        applyButton.addEventListener('click', function() {
+            const discountValue = parseInt(promoInput.value);
+            if (discountValue >= 1 && discountValue <= 50) {
+                errorText.classList.add('d-none');
+                applyDiscount(discountValue);
+            } else {
+                errorText.classList.remove('d-none');
+            }
+        });
+    }
 }

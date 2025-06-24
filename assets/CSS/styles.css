@@ -137,11 +137,11 @@
     height: 100%;
     max-height: 200px;
     width: 100%;
-    transition: transform 0.1s step-end;
+    transition: transform 0.2s ease-in-out;
     display: block;
 }
 
-/* @keyframes blink-img {
+@keyframes blink-img {
     0% {
         opacity: 1;
     }
@@ -153,11 +153,14 @@
     100% {
         opacity: 1;
     }
-} */
+}
 
 .image-container:hover .card-img-top {
     transform: scale(1.1);
-    /* animation: blink-img 0.2s steps(1, start); */
+}
+
+.col-6:not(:first-child) .image-container:hover .card-img-top {
+    animation: blink-img 0.1s steps(1, start);
 }
 
 .meal-plan-card .save-badge {
@@ -462,7 +465,8 @@
 .cart-item .meal-name {
     font-family: 'Roboto-Bold', sans-serif;
     font-size: 14px;
-    padding: 0 5px;
+    padding: 0 20px 0px 10px;
+    margin: 0;
 }
 
 .meal-card-main .meal-name {
@@ -519,11 +523,14 @@
     border-right: 1px solid var(--meals-stats-border-color);
 }
 
-.meal-stats .gluten-stats,
+.meal-stats .gluten-stats {
+    padding: 0px 5px;
+}
+
 .meal-stats .calories-stats,
 .meal-stats .carbs-stats,
 .meal-stats .proteins-stats {
-    padding: 0px 3px;
+    padding: 0px 2px;
 }
 
 .meal-card.special {
@@ -604,7 +611,7 @@
 .cart-item {
     display: flex;
     align-items: center;
-    padding: 0 15px 0 10px;
+    padding: 0 15px 0 5px;
     background-color: var(--meals-cart-meal-bg-color);
     margin-bottom: 4px;
 }
@@ -632,7 +639,7 @@
 
 .cart-item .meal-thumb {
     width: 100%;
-    max-width: 80px;
+    max-width: 110px;
     height: 100%;
     min-height: 60px;
     object-fit: cover;
@@ -642,16 +649,11 @@
     flex: 1;
 }
 
-.cart-item .meal-name {
-    font-family: 'Roboto-Bold', sans-serif;
-    font-size: 14px;
-    margin: 0;
-}
-
 .cart-item .item-controls {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 5px 0;
 }
 
 .cart-item .remove-item,
@@ -789,7 +791,6 @@
     flex-direction: column;
     justify-content: space-between;
     z-index: 1000;
-    /* Above overlay */
 }
 
 .mobile-cart .subtotal {
@@ -947,6 +948,19 @@
     color: var(--price-highlight-color);
 }
 
+.order-summary-details .order-discount {
+    border-bottom: 1px solid var(--meals-cart-border-color);
+    padding: 10px;
+}
+
+.order-summary-details .order-discount-header {
+    font-size: 14px;
+}
+
+.order-summary-details .order-discount .order-meal-value {
+    color: var(--price-highlight-color);
+}
+
 .selected-meals-list .meal-item {
     display: flex;
     align-items: center;
@@ -1019,7 +1033,7 @@
 .mobile-cart-overlay {
     display: none;
     position: fixed;
-    bottom: 140px;
+    bottom: 90px;
     left: 0;
     right: 0;
     height: calc(80vh - 140px);
@@ -1035,6 +1049,13 @@
 .mobile-cart-overlay.show {
     transform: translateY(0);
     display: block;
+}
+
+.mobile-cart-overlay .cart-items-container {
+    flex: 1;
+    padding: 10px 20px;
+    overflow: visible;
+    max-height: 200px;
 }
 
 .mobile-cart-content {
@@ -1085,6 +1106,11 @@
     height: 35px;
     font-size: 16px;
     padding: 10px 15px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    outline: none;
 }
 
 .order-summary-promo .btn-primary {
@@ -1145,11 +1171,14 @@
         padding: 0;
     }
 
-    .meal-stats .gluten-stats,
+    .meal-stats .gluten-stats {
+        padding: 0px 5px;
+    }
+
     .meal-stats .calories-stats,
     .meal-stats .carbs-stats,
     .meal-stats .proteins-stats {
-        padding: 0px 11px;
+        padding: 0px 9px;
     }
 
     #checkout-section .checkout-card {
