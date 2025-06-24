@@ -31,7 +31,8 @@
     "proteins": "46",
     "price": 14.99,
     "isSpecial": true,
-    "additionalCharges": 12.99
+    "additionalCharges": 10.99,
+    "backgroundColor": "#000000"
   },
   {
     "image": "assets/images/4@2x.png",
@@ -109,7 +110,8 @@
     "proteins": "46",
     "price": 14.99,
     "isSpecial": true,
-    "additionalCharges": 11.99
+    "additionalCharges": 11.99,
+    "backgroundColor": "#000000"
   },
   {
     "image": "assets/images/3@2x.png",
@@ -242,7 +244,8 @@
     "proteins": "46",
     "price": 8.99,
     "isSpecial": true,
-    "additionalCharges": 11.99
+    "additionalCharges": 11.99,
+    "backgroundColor": "#000000"
   },
   {
     "image": "assets/images/7@2x.png",

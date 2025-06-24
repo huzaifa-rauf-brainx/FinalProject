@@ -15,17 +15,19 @@ function updateMealCount() {
 }
 
 function addToCart(meal) {
-    const existingMeal = cart.find(m => m.name === meal.name);
     const totalCount = getTotalCartCount();
 
     if (totalCount < mealCount) {
-        if (existingMeal) {
-            existingMeal.count += 1;
-        } else {
-            cart.push({ ...meal, count: 1 });
-        }
+        const mealWithId = {
+            ...meal,
+            id: crypto.randomUUID(),
+            count: 1
+        };
+        cart.push(mealWithId);
         updateCartUI();
         saveCartToLocalStorage();
+    } else {
+        alert(`You can only select ${mealCount} meals.`);
     }
 }
 
@@ -111,7 +113,6 @@ function updateCartUI() {
         el.textContent = remaining;
     });
 
-    // Update the message for remaining meals
     const remainingMessages = document.querySelectorAll('.meals-remaining');
     remainingMessages.forEach(el => {
         el.style.display = 'block';
@@ -130,6 +131,24 @@ function updateCartUI() {
     if (clearAllBtn) {
         clearAllBtn.style.display = getTotalCartCount() > 0 ? '' : 'none';
     }
+
+    disableAddButtonsIfLimitReached();
+
+    const mobileCartItemsContainer = document.querySelector('.mobile-cart-overlay .cart-items-container');
+    mobileCartItemsContainer.innerHTML = '';
+
+    cart.forEach(item => {
+        const cartItemClone = createCartItem(item);
+        mobileCartItemsContainer.appendChild(cartItemClone);
+    });
+
+    const mobileMealsCount = document.querySelector('#mobileOrderSummary .meals-count span:first-child');
+    const mobileMealsTotal = document.querySelector('#mobileOrderSummary .meals-count span:last-child');
+    const mobileSubtotalAmount = document.querySelector('#mobileOrderSummary .amount');
+
+    if (mobileMealsCount) mobileMealsCount.textContent = `${getTotalCartCount()} Meals`;
+    if (mobileMealsTotal) mobileMealsTotal.textContent = `$${subtotal.toFixed(2)}`;
+    if (mobileSubtotalAmount) mobileSubtotalAmount.textContent = subtotal.toFixed(2);
 }
 
 function createCartItem(meal) {
@@ -144,8 +163,10 @@ function createCartItem(meal) {
 
     if (meal.additionalCharges && meal.additionalCharges > 0) {
         cartItem.classList.add('special');
+        if (meal.backgroundColor) {
+            cartItem.style.backgroundColor = meal.backgroundColor;
+        }
 
-        // Show price tag
         const priceTag = cartItem.querySelector('.price-tag');
         if (priceTag) {
             priceTag.textContent = `+$${meal.additionalCharges.toFixed(2)}`;
@@ -261,22 +282,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    const clearAllBtn = document.querySelector('.clear-all');
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', () => {
+    document.querySelectorAll('.clear-all').forEach(btn => {
+        btn.addEventListener('click', () => {
             cart = [];
             updateCartUI();
+            saveCartToLocalStorage();
+            document.body.style.overflow = '';
         });
-    }
+    });
 
     const daysNextBtn = document.querySelector('.delivery-date-section .next-btn');
     if (daysNextBtn) {
         daysNextBtn.addEventListener('click', function () {
             const selectedDate = document.querySelector(".date-option.selected").dataset.date;
             localStorage.setItem("selectedDate", selectedDate);
-            currentStep = 2;
-            updateBreadcrumbUI(currentStep);
-            showStep(currentStep);
         });
     }
 
@@ -286,16 +305,45 @@ document.addEventListener("DOMContentLoaded", function () {
         const promoContainer = document.querySelector('.order-summary-promo');
         if (promoContainer) {
             promoContainer.innerHTML = `
-                <input type="text" class="form-control" placeholder="Enter Promo Code" >
+                <div class="promo-input-container">
+                    <div class="d-flex w-100">
+                        <input type="number" class="form-control flex-grow-1 me-2" id="promoInput" min="1" max="50" placeholder="Enter discount (1-50)">
+                        <button class="btn btn-primary" id="applyPromo">Apply</button>
+                    </div>
+                    <small class="text-danger d-none mt-1" id="promoError">Please enter a value between 1 and 50</small>
+                </div>
             `;
+
+            const promoInput = document.getElementById('promoInput');
+            const applyButton = document.getElementById('applyPromo');
+            const errorText = document.getElementById('promoError');
+
+            applyButton.addEventListener('click', function() {
+                const discountValue = parseInt(promoInput.value);
+                if (discountValue >= 1 && discountValue <= 50) {
+                    errorText.classList.add('d-none');
+                    applyDiscount(discountValue);
+                } else {
+                    errorText.classList.remove('d-none');
+                }
+            });
         }
     });
-
 
     updateCartUI();
 
     loadMeals();
 });
+
+function disableAddButtonsIfLimitReached() {
+    const addButtons = document.querySelectorAll('.add-meal-btn');
+    const reachedLimit = getTotalCartCount() >= mealCount;
+
+    addButtons.forEach(btn => {
+        btn.disabled = reachedLimit;
+        btn.classList.toggle('disabled', reachedLimit);
+    });
+}
 
 // Function to load and display meals
 async function loadMeals() {
@@ -312,125 +360,52 @@ async function loadMeals() {
             return;
         }
 
-        container.innerHTML = '';
+        const template = document.getElementById('card-template');
 
         meals.forEach(meal => {
-            const mealCol = document.createElement('div');
-            mealCol.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+            const mealClone = template.content.cloneNode(true);
+            const mealCard = mealClone.querySelector('.meal-card');
 
-            const mealCard = document.createElement('div');
-            mealCard.className = 'meal-card';
             if (meal.isSpecial) {
                 mealCard.classList.add('special');
+                if (meal.backgroundColor) {
+                    mealCard.style.backgroundColor = meal.backgroundColor;
+                }
             }
 
-            const imageContainer = document.createElement('div');
-            imageContainer.className = 'meal-image-container';
-
-            const img = document.createElement('img');
-            img.className = 'meal-img';
+            const img = mealClone.querySelector('.meal-img');
             img.src = meal.image;
             img.alt = meal.name;
 
-            imageContainer.appendChild(img);
-
+            const priceTag = mealClone.querySelector('.price-tag');
             if (meal.isSpecial && meal.additionalCharges > 0) {
-                const priceTag = document.createElement('div');
-                priceTag.className = 'price-tag';
                 priceTag.textContent = `+$${meal.additionalCharges.toFixed(2)}`;
-                imageContainer.appendChild(priceTag);
+                priceTag.classList.remove('d-none');
+            } else {
+                priceTag.classList.add('d-none');
             }
 
-            imageContainer.appendChild(img);
+            mealClone.querySelector('.meal-name-main').textContent = meal.name;
+            mealClone.querySelector('.meal-ingredients').textContent = meal.ingredients;
 
-            const mealInfo = document.createElement('div');
-            mealInfo.className = 'meal-info';
+            mealClone.querySelector('.gluten-value').textContent = meal.gluten;
+            mealClone.querySelector('.calories-value').textContent = meal.calories;
+            mealClone.querySelector('.carbs-value').textContent = meal.carbs;
+            mealClone.querySelector('.proteins-value').textContent = meal.proteins;
 
-            const name = document.createElement('h3');
-            name.className = 'meal-name';
-            name.textContent = meal.name;
+            const addBtn = mealClone.querySelector('.add-meal-btn');
+            addBtn.addEventListener('click', () => {
+                addToCart(meal);
+                disableAddButtonsIfLimitReached();
+            });
 
-            const ingredients = document.createElement('p');
-            ingredients.className = 'meal-ingredients';
-            ingredients.textContent = meal.ingredients;
-
-            const footer = document.createElement('div');
-            footer.className = 'meal-footer';
-
-            const stats = document.createElement('div');
-            stats.className = 'meal-stats mb-2 d-flex justify-content-between';
-
-            const statsRow = document.createElement('div');
-            statsRow.className = 'd-flex justify-content-between';
-
-            const glutenStats = document.createElement('div');
-            glutenStats.className = 'gluten-stats';
-            glutenStats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-label">Gluten</div>
-                </div>
-                <div>
-                    <div class="stat-value gluten-value">${meal.gluten}</div>
-                </div>
-            `;
-
-            const caloriesStats = document.createElement('div');
-            caloriesStats.className = 'calories-stats';
-            caloriesStats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-value calories-value">${meal.calories}</div>
-                </div>
-                <div class="stat-label">Cals</div>
-            `;
-
-            const carbsStats = document.createElement('div');
-            carbsStats.className = 'carbs-stats';
-            carbsStats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-value carbs-value">${meal.carbs}</div>
-                </div>
-                <div class="stat-label">Carbs</div>
-            `;
-
-            const proteinsStats = document.createElement('div');
-            proteinsStats.className = 'proteins-stats';
-            proteinsStats.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-value proteins-value">${meal.proteins}</div>
-                </div>
-                <div class="stat-label">Proteins</div>
-            `;
-
-            statsRow.appendChild(glutenStats);
-            statsRow.appendChild(caloriesStats);
-            statsRow.appendChild(carbsStats);
-            statsRow.appendChild(proteinsStats);
-
-            const addBtnContainer = document.createElement('div');
-            addBtnContainer.className = 'ms-auto add-btn-wrapper';
-            const addBtn = document.createElement('button');
-            addBtn.className = 'add-meal-btn';
-            addBtn.textContent = '+ Add';
-            addBtn.addEventListener('click', () => addToCart(meal));
-            addBtnContainer.appendChild(addBtn);
-
-            stats.appendChild(statsRow);
-            stats.appendChild(addBtnContainer);
-            footer.appendChild(stats);
-
-            mealInfo.appendChild(name);
-            mealInfo.appendChild(ingredients);
-            mealInfo.appendChild(footer);
-
-            mealCard.appendChild(imageContainer);
-            mealCard.appendChild(mealInfo);
-
-            mealCol.appendChild(mealCard);
-            container.appendChild(mealCol);
+            container.appendChild(mealClone);
         });
+
     } catch (error) {
         console.error('Error loading meals:', error);
     }
+    disableAddButtonsIfLimitReached();
 }
 
 function initializeCartItemEvents(cartItem, meal) {
@@ -460,51 +435,53 @@ function initializeCheckout() {
         return total + (meal.price + (meal.additionalCharges || 0)) * meal.count;
     }, 0);
 
+    // Reset to original totals when initializing
     document.getElementById('mealsTotal').textContent = `$${mealsTotal.toFixed(2)}`;
-
+    
     const shipping = 8.99;
     const tax = 10.99;
-
     const total = mealsTotal + shipping + tax;
+    
     document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+    localStorage.setItem('originalMealsTotal', mealsTotal.toFixed(2));
 
     const selectedMealsContainer = document.getElementById('selectedMeals');
     selectedMealsContainer.innerHTML = '';
 
+    const groupedMeals = {};
+
     cartData.forEach(meal => {
-        const mealElement = document.createElement('div');
-        mealElement.className = 'meal-item';
-
-        const isSpecial = meal.additionalCharges && meal.additionalCharges > 0;
-        if (isSpecial) {
-            mealElement.classList.add('special-meal');
+        if (!groupedMeals[meal.name]) {
+            groupedMeals[meal.name] = { ...meal };
+        } else {
+            groupedMeals[meal.name].count += meal.count;
         }
-
-        mealElement.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <div style="font-weight: bold; font-size: 18px; margin-right: 10px;"><span class="meal-quantity">${meal.count}</span></div>
-                <div style="position: relative;">
-                    <img src="${meal.image}" alt="${meal.name}" style="width: 90px; height: 60px; object-fit: cover; border-radius: 0px;">
-                    ${meal.additionalCharges && meal.additionalCharges > 0
-                ? `<div style="position: absolute; bottom: 0; left: 0; background: #D75D33; color: #fff; padding: 2px 5px; font-size: 12px; border-radius: 0 4px 4px 0;">
-                                +$${meal.additionalCharges.toFixed(2)}
-                            </div>`
-                : ''}
-                </div>
-            </div>
-            <div class="meal-details">
-                <div class="meal-name">${meal.name}</div>
-                <div class="meal-description">${meal.ingredients || ''}</div>
-            </div>
-        `;
-
-        selectedMealsContainer.appendChild(mealElement);
     });
 
+    const template = document.getElementById('selected-meal-template');
 
-    document.getElementById('checkout-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        alert('Order placed successfully!');
+    Object.values(groupedMeals).forEach(meal => {
+        const clone = template.content.cloneNode(true);
+        const mealItem = clone.querySelector('.meal-item');
+
+        if (meal.additionalCharges > 0 && meal.backgroundColor) {
+            mealItem.classList.add('special-meal');
+            mealItem.style.backgroundColor = meal.backgroundColor;
+        }
+
+        clone.querySelector('.meal-quantity').textContent = meal.count;
+        clone.querySelector('.meal-thumb-img').src = meal.image;
+        clone.querySelector('.meal-thumb-img').alt = meal.name;
+        clone.querySelector('.meal-name').textContent = meal.name;
+        clone.querySelector('.meal-description').textContent = meal.ingredients || '';
+
+        const priceTag = clone.querySelector('.special-price-tag');
+        if (meal.additionalCharges > 0) {
+            priceTag.textContent = `+$${meal.additionalCharges.toFixed(2)}`;
+            priceTag.style.display = 'block';
+        }
+
+        selectedMealsContainer.appendChild(clone);
     });
 }
 
@@ -520,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
         });
-
         observer.observe(checkoutSection, {
             attributes: true
         });
@@ -534,6 +510,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const PHONE_REGEX = /^\d{11}$/;
     const ZIP_REGEX = /^\d{5}$/;
 
+    // Initialize submit button as disabled
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = "0.7";
+    submitBtn.style.cursor = "not-allowed";
+
     function showError(input, message) {
         let errorDiv = document.getElementById(`${input.id}Error`);
         if (!errorDiv) {
@@ -545,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
         errorDiv.textContent = message;
         input.classList.add("is-invalid");
         input.classList.remove("is-valid");
+        updateSubmitButtonState();
     }
 
     function showSuccess(input) {
@@ -552,6 +534,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (errorDiv) errorDiv.textContent = "";
         input.classList.remove("is-invalid");
         input.classList.add("is-valid");
+        updateSubmitButtonState();
     }
 
     function validateInput(input) {
@@ -636,31 +619,142 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function isFormValid() {
-        const inputs = form.querySelectorAll("input:not([type=checkbox]):not([type=hidden])");
-        return Array.from(inputs).every(input => input.classList.contains("is-valid"));
+        const requiredInputs = form.querySelectorAll("input[required]");
+        return Array.from(requiredInputs).every(input => input.classList.contains("is-valid"));
     }
 
-    form.addEventListener("blur", (e) => {
-        if (e.target.tagName === "INPUT" && e.target.type !== "checkbox") {
+    function updateSubmitButtonState() {
+        const allValid = isFormValid();
+        submitBtn.disabled = !allValid;
+        submitBtn.style.opacity = allValid ? "1" : "0.7";
+        submitBtn.style.cursor = allValid ? "pointer" : "not-allowed";
+    }
+
+    form.addEventListener("input", (e) => {
+        if (e.target.tagName === "INPUT") {
             validateInput(e.target);
-            const allValid = isFormValid();
-            submitBtn.disabled = !allValid;
-            submitBtn.style.opacity = allValid ? "1" : "0.7";
-            submitBtn.style.cursor = allValid ? "pointer" : "not-allowed";
+        }
+    });
+
+    form.addEventListener("blur", (e) => {
+        if (e.target.tagName === "INPUT") {
+            validateInput(e.target);
         }
     }, true);
 
     form.addEventListener("submit", (e) => {
         e.preventDefault();
+        const requiredInputs = form.querySelectorAll("input[required]");
         let allValid = true;
-        const inputs = form.querySelectorAll("input:not([type=checkbox]):not([type=hidden])");
-        inputs.forEach(input => {
+
+        requiredInputs.forEach(input => {
             const valid = validateInput(input);
             if (!valid) allValid = false;
         });
 
         if (allValid) {
-            alert("Checkout submitted successfully!");
+            alert("Order placed successfully!");
         }
     });
 });
+
+const mobileCartTrigger = document.getElementById('mobile-cart-trigger');
+const mobileCartOverlay = document.querySelector('.mobile-cart-overlay');
+const mobileCart = document.querySelector('.mobile-cart');
+const closeCartButton = document.querySelector('.mobile-cart-overlay .close-cart');
+
+mobileCartTrigger.addEventListener('click', () => {
+    const isOpen = mobileCartOverlay.classList.contains('show');
+    if (isOpen) {
+        mobileCartOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+    } else {
+        mobileCartOverlay.classList.add('show');
+        document.body.style.overflow = '';
+        
+        const selectedDate = localStorage.getItem('selectedDate');
+        if (selectedDate) {
+            const mobileCartDate = mobileCartOverlay.querySelector('.selected-date');
+            if (mobileCartDate) {
+                mobileCartDate.textContent = selectedDate;
+            }
+        }
+    }
+});
+
+closeCartButton.addEventListener('click', () => {
+    mobileCartOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+});
+
+function applyDiscount(discountPercent) {
+    const originalMealsTotal = parseFloat(localStorage.getItem('originalMealsTotal'));
+    const shipping = 8.99;
+    const tax = 10.99;
+    
+    const discountAmount = (originalMealsTotal * discountPercent) / 100;
+    const discountedMealsTotal = originalMealsTotal - discountAmount;
+    
+    document.getElementById('mealsTotal').textContent = `$${discountedMealsTotal.toFixed(2)}`;
+    
+    const total = discountedMealsTotal + shipping + tax;
+    document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+    
+    const promoContainer = document.querySelector('.order-summary-promo');
+    promoContainer.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center">
+            <span>Discount applied: ${discountPercent}% off</span>
+            <a href="#" class="ms-3 text-decoration-underline" id="removePromo">Remove</a>
+        </div>
+    `;
+    
+    document.getElementById('removePromo').addEventListener('click', function(e) {
+        e.preventDefault();
+        removeDiscount();
+    });
+}
+
+function removeDiscount() {
+    const originalMealsTotal = parseFloat(localStorage.getItem('originalMealsTotal'));
+    const shipping = 8.99;
+    const tax = 10.99;
+    
+    document.getElementById('mealsTotal').textContent = `$${originalMealsTotal.toFixed(2)}`;
+    
+    const total = originalMealsTotal + shipping + tax;
+    document.getElementById('orderTotal').textContent = `$${total.toFixed(2)}`;
+    
+    const promoContainer = document.querySelector('.order-summary-promo');
+    promoContainer.innerHTML = `<a href="#" class="text-decoration-underline" id="addPromoLink">+ Add Promo Code</a>`;
+    
+    document.getElementById('addPromoLink').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const promoContainer = document.querySelector('.order-summary-promo');
+        if (promoContainer) {
+            promoContainer.innerHTML = `
+                <div class="promo-input-container">
+                    <div class="d-flex w-100">
+                        <input type="number" class="form-control flex-grow-1 me-2" id="promoInput" min="1" max="50" placeholder="Enter discount (1-50)">
+                        <button class="btn btn-primary" id="applyPromo">Apply</button>
+                    </div>
+                    <small class="text-danger d-none mt-1" id="promoError">Please enter a value between 1 and 50</small>
+                </div>
+            `;
+
+            const promoInput = document.getElementById('promoInput');
+            const applyButton = document.getElementById('applyPromo');
+            const errorText = document.getElementById('promoError');
+
+            applyButton.addEventListener('click', function() {
+                const discountValue = parseInt(promoInput.value);
+                if (discountValue >= 1 && discountValue <= 50) {
+                    errorText.classList.add('d-none');
+                    applyDiscount(discountValue);
+                } else {
+                    errorText.classList.remove('d-none');
+                }
+            });
+        }
+    });
+}

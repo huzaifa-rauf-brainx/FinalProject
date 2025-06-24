@@ -33,7 +33,7 @@ $(document).ready(function () {
     $(".meal-card-wrapper").on("click", function () {
         const mealCountText = $(this).find(".meal-count").text().trim();
         const mealCount = parseInt(mealCountText.match(/\d+/)[0]);
-        
+
         localStorage.setItem("mealCount", mealCount.toString());
 
         const planPrice = $(this).find(".plan-price .price-highlight").text().trim();
@@ -59,7 +59,7 @@ $(document).ready(function () {
     });
 
     // Add click handler for meals section next button
-    $(".cart-next-btn").on("click", function() {
+    $(".cart-next-btn").on("click", function () {
         if (!$(this).prop('disabled')) {
             currentStep = 3;
             updateBreadcrumbUI(currentStep);
@@ -70,12 +70,14 @@ $(document).ready(function () {
     function updateBreadcrumbUI(step) {
         steps.each(function (index) {
             const link = $(this).find("a");
+
             if (index === step) {
                 $(this).addClass("breadcrumb-item-active").removeClass("disabled");
                 link.addClass("breadcrumb-link-active").removeClass("breadcrumb-link");
             } else {
                 $(this).removeClass("breadcrumb-item-active");
                 link.removeClass("breadcrumb-link-active").addClass("breadcrumb-link");
+
                 if (index > step) {
                     $(this).addClass("disabled");
                 } else {
