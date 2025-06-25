@@ -34,9 +34,15 @@
     font-display: swap;
 }
 
+#days-section,
+#meals-section,
+#checkout-section {
+    display: none;
+}
+
 /* Body Styles */
 .main-container {
-    font-family: 'Roboto-Regular', sans-serif;
+    font-family: 'Roboto-Regular';
     background: var(--plans-page-bg-color);
 }
 
@@ -58,12 +64,12 @@
 .breadcrumb-item+.breadcrumb-item::before {
     content: ">";
     color: var(--header-text-color);
-    margin: 0 10px;
+    margin: 0 15px;
 }
 
 .breadcrumb .breadcrumb-link-active {
     color: var(--header-active-link-color);
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
@@ -94,7 +100,7 @@
 }
 
 .plan-page-header .main-title {
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
     font-size: 36px;
     color: var(--plans-page-text-color);
 }
@@ -108,11 +114,11 @@
 
 .plan-page-header .price-highlight {
     color: var(--price-highlight-color);
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
 }
 
 .plan-page-header .main-description-highlight {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
 }
 
 /* Card Styles */
@@ -182,30 +188,30 @@
 .card-description .meal-count {
     font-size: 24px;
     color: var(--header-text-color);
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
 }
 
 .card-description .per-week {
     font-size: 14px;
     color: var(--header-text-color);
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
 }
 
 .price-info .price-highlight {
     color: var(--price-highlight-color);
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
 }
 
 .card-description .plan-price {
     font-size: 16px;
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
 }
 
 .card-description .per-meal-price {
     color: var(--header-text-color);
     font-size: 16px;
     margin: 0;
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
 }
 
 /* Footer Styles */
@@ -235,7 +241,7 @@
 }
 
 .delivery-day-main {
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
     font-size: 48px;
 }
 
@@ -287,7 +293,7 @@
 }
 
 .delivery-dates-container .date-text {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     color: var(--plans-page-text-color);
     font-size: 14px;
 }
@@ -295,7 +301,7 @@
 .date-option .most-popular-tag {
     color: var(--price-highlight-color);
     font-size: 12px;
-    font-family: 'Roboto-Regular', sans-serif;
+    font-family: 'Roboto-Regular';
     display: flex;
     align-items: center;
     gap: 4px;
@@ -322,7 +328,7 @@
     color: var(--header-bg-color);
     border: none;
     border-radius: 8px;
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
     cursor: pointer;
     font-size: 18px;
 }
@@ -332,7 +338,7 @@
 }
 
 .delivery-date-section .selected-date {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 16px;
     color: var(--header-text-color);
 }
@@ -452,7 +458,7 @@
     background-color: var(--price-highlight-color);
     color: var(--header-bg-color);
     font-size: 12px;
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
     padding: 4px 10px;
     z-index: 2;
 }
@@ -463,14 +469,14 @@
 }
 
 .cart-item .meal-name {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
     padding: 0 20px 0px 10px;
     margin: 0;
 }
 
 .meal-card-main .meal-name {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
     padding: 10px 5px 0px 5px;
 }
@@ -586,7 +592,7 @@
 }
 
 .delivery-info .selected-date {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 12px;
     color: var(--header-text-color);
 }
@@ -604,7 +610,7 @@
 }
 
 .order-summary .order-summary-main {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
@@ -694,7 +700,7 @@
 
 .subtotal-footer .footer-dollar {
     color: var(--price-highlight-color);
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
@@ -722,7 +728,7 @@
 }
 
 .cart-icon-container .cart-item-count {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 16px;
     color: var(--price-highlight-color);
 }
@@ -861,12 +867,12 @@
 
 .checkout-form-main .checkout-left-header,
 .order-summary-container .checkout-right-header {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 23px;
 }
 
 .checkout-form-container .zip-change-opt {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     color: var(--header-active-link-color);
 }
 
@@ -875,12 +881,12 @@
 }
 
 .checkout-form-header {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 18px;
 }
 
 .checkout-form-container .form-label {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
@@ -892,7 +898,7 @@
     background: linear-gradient(to right, #AF2081, #533174);
     border: none;
     padding: 16px;
-    font-family: 'Roboto-Medium', sans-serif;
+    font-family: 'Roboto-Medium';
     font-size: 14px;
 }
 
@@ -917,7 +923,7 @@
 }
 
 .order-summary-card .checkout-order-date {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
     padding: 0px 10px;
 }
@@ -938,12 +944,12 @@
 }
 
 .order-summary-details .order-meal-value {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
 .order-summary-details .order-total-value {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
     color: var(--price-highlight-color);
 }
@@ -951,6 +957,7 @@
 .order-summary-details .order-discount {
     border-bottom: 1px solid var(--meals-cart-border-color);
     padding: 10px;
+    display: none !important;
 }
 
 .order-summary-details .order-discount-header {
@@ -991,7 +998,7 @@
 }
 
 .meal-qty {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
     margin-right: 10px;
 }
@@ -1020,12 +1027,12 @@
 }
 
 .meal-details .meal-name {
-    font-family: 'Roboto-Bold', sans-serif;
+    font-family: 'Roboto-Bold';
     font-size: 14px;
 }
 
 .meal-details .meal-description {
-    font-family: 'Roboto-Regular', sans-serif;
+    font-family: 'Roboto-Regular';
     font-size: 12px;
     color: var(--meal-info-text-color);
 }
@@ -1132,7 +1139,7 @@
 @media (max-width: 767px) {
 
     .breadcrumb-item+.breadcrumb-item::before {
-        margin: 0 0;
+        margin: 0 5px;
     }
 
     .card-description .meal-count {
@@ -1141,23 +1148,25 @@
 
     .plans-page-footer .get-started-btn {
         width: 100%;
+        min-width: 100%;
         padding: 12px 16px;
         transition: none;
     }
+
+    .plan-page-header .main-description {
+        font-size: 18px;
+    }    
 
     .common-questions-main {
         max-width: 100%;
     }
 
     .days-page-main .delivery-day-main,
-    .days-page-main .common-question-header {
-        font-size: 30px;
-    }
-
+    .days-page-main .common-question-header,
     .common-questions-main .common-question-header {
         font-size: 30px;
     }
-
+    
     .days-page-main .common-question-header {
         max-width: 100%;
     }
