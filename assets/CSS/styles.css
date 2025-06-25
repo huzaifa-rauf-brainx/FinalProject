@@ -1113,6 +1113,13 @@
     height: 35px;
     font-size: 16px;
     padding: 10px 15px;
+    border: 1px solid var(--checkout-page-border-color);
+}
+
+.order-summary-promo .form-control:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: var(--checkout-page-border-color);
 }
 
 .form-control:focus {
@@ -1155,7 +1162,7 @@
 
     .plan-page-header .main-description {
         font-size: 18px;
-    }    
+    }
 
     .common-questions-main {
         max-width: 100%;
@@ -1166,7 +1173,7 @@
     .common-questions-main .common-question-header {
         font-size: 30px;
     }
-    
+
     .days-page-main .common-question-header {
         max-width: 100%;
     }
@@ -1196,5 +1203,19 @@
 
     .mobile-cart-overlay.show+.mobile-cart {
         box-shadow: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1280px) {
+
+    .meal-stats .add-meal-btn {
+        padding: 7px 11px;
+    }
+    .meal-stats .add-btn-wrapper {
+        padding-right: 4px;
+    }
+    .cart-item .meal-name {
+        font-size: 12px;
+        padding: 0 0px 0px 10px;
     }
 }
